@@ -4,12 +4,14 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import colorchooser
 from tkinter import messagebox as msg
+from plyer import notification
 
-canvas = np.ones((650,700,3),np.uint8)*255
+canvas = np.ones((650,1250,3),np.uint8)*255
 drawing = False
 color = (0,0,0)
 running = True
 radius = 10
+title = "Canvas"
 
 def draw(event,x,y,flags,param):
     global drawing,color
@@ -25,13 +27,32 @@ def save():
     location = filedialog.asksaveasfilename(defaultextension = ".png",filetypes = [("PNG","*.png")])
     if location:
         cv2.imwrite(location,canvas)
-        print(f"File saved at {location}!")
+        notification.notify(
+                title = title,
+                message = f"File saved at {location}!",
+                app_name = "Canvas",
+                timeout = 5
+            )
 
 def penSize(change):
     global radius
     radius += change
     if radius <= 1:
         radius = 1
+
+def load():
+    file_path = filedialog.askopenfilename(filetypes=[("PNG", "*.png"), ("JPEG", "*.jpg")])
+    if file_path:
+        loaded_canvas = cv2.imread(file_path)
+        if loaded_canvas is not None:
+            global canvas
+            canvas = loaded_canvas
+            notification.notify(
+                title = title,
+                message = f"Loaded file from {file_path}!",
+                app_name = "Canvas",
+                timeout = 5
+            )
 
 def customColor():
     global color
@@ -48,7 +69,7 @@ while running:
     key = cv2.waitKey(1)
 
     if key == 27:
-        ask = msg.askyesno("Warn", "Want to save the file before quitting?")
+        ask = msg.askyesno("Warning", "Want to save the file before quitting?")
         if ask:
             save()
         running = False
@@ -74,6 +95,11 @@ while running:
         canvas = np.ones((650,700,3),np.uint8)*255
     elif key == ord("s"):
         save()
+    elif key == ord("l"):
+        ask = msg.askyesno("Warning","Would you like to save the current file?")
+        if ask:
+            save()
+        load()
     elif key == ord("+"):
         penSize(1)
     elif key == ord("-"):
