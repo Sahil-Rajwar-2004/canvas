@@ -92,7 +92,7 @@ while running:
     elif key == ord("e"):
         color = (255,255,255)
     elif key == ord("c"):
-        canvas = np.ones((650,700,3),np.uint8)*255
+        canvas = np.ones((650,1250,3),np.uint8)*255
     elif key == ord("s"):
         save()
     elif key == ord("l"):
