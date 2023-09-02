@@ -4,14 +4,31 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import colorchooser
 from tkinter import messagebox as msg
-from plyer import notification
+
+infos = """
+Please keep this terminal open to avoid losing all your progress if you haven't saved it yet.
+
+Esc : Exit
+i   : Display Info
+r   : Red
+g   : Green
+b   : Blue
+e   : Eraser
+c   : Clear Screen
+s   : Save File
+l   : Load File
++   : Increase Pen Size
+-   : Decrease Pen Size
+p   : Pick Any Color
+"""
+
+print(infos)
 
 canvas = np.ones((650,1250,3),np.uint8)*255
 drawing = False
 color = (0,0,0)
 running = True
 radius = 10
-title = "Canvas"
 
 def draw(event,x,y,flags,param):
     global drawing,color
@@ -27,12 +44,7 @@ def save():
     location = filedialog.asksaveasfilename(defaultextension = ".png",filetypes = [("PNG","*.png")])
     if location:
         cv2.imwrite(location,canvas)
-        notification.notify(
-                title = title,
-                message = f"File saved at {location}!",
-                app_name = "Canvas",
-                timeout = 5
-            )
+        print(f"File saved at {location}!")
 
 def penSize(change):
     global radius
@@ -47,12 +59,7 @@ def load():
         if loaded_canvas is not None:
             global canvas
             canvas = loaded_canvas
-            notification.notify(
-                title = title,
-                message = f"Loaded file from {file_path}!",
-                app_name = "Canvas",
-                timeout = 5
-            )
+            print(f"Loaded file from {file_path}!")
 
 def customColor():
     global color
@@ -77,7 +84,7 @@ while running:
         info = Tk()
         info.resizable(False, False)
         info.geometry("350x250")
-        label_text = """[Esc]: Exit\n[i]: Display Info\n[r]: Red\n[g]: Green\n[b]: Blue\n[e]: Eraser\n[c]: Clear\n[s]: Save File\n[+]: Increase Pen Size\n[-]: Decrease Pen Size\n[p]: Customize Color"""
+        label_text = """[Esc]: Exit\n[i]: Display Info\n[r]: Red\n[g]: Green\n[b]: Blue\n[e]: Eraser\n[c]: Clear\n[s]: Save File\n[l]: Load File\n[+]: Increase Pen Size\n[-]: Decrease Pen Size\n[p]: Customize Color"""
         label = Label(info, text=label_text, font=("Cascadia Code", 10))
         label.pack(fill = BOTH,padx = 5,pady = 5,anchor = W)
         exit_button = Button(info, bg = "#242424", fg = "#ffffff", text = "Exit", font = ("cascadia code",9), command = info.destroy)
